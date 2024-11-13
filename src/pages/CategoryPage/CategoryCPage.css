@@ -1,0 +1,138 @@
+/* General styling for the page container */
+.category-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Styling for the category form */
+  .category-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .category-form input {
+    padding: 10px;
+    font-size: 16px;
+    width: 70%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .category-form button {
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .category-form button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Styling for the error message */
+  .error {
+    color: red;
+    margin-top: 10px;
+  }
+  
+  /* Styling for the category table */
+  .category-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .category-table th,
+  .category-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .category-table th {
+    background-color: #f4f4f4;
+  }
+  
+  .category-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .category-table .category-item td {
+    justify-content: space-between;  /* Align name and buttons to opposite sides */
+    align-items: center;             /* Ensure buttons are vertically aligned */
+  }
+  
+  .category-table .btn {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .category-table .btn.update-btn {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  .category-table .btn.delete-btn {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .category-table .btn:hover {
+    opacity: 0.8;
+  }
+  
+  /* Modal Styles */
+  .modal {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+  }
+  
+  .modal input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .modal button {
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .modal button:hover {
+    background-color: #45a049;
+  }
+  

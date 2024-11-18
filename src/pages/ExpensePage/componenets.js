@@ -9,10 +9,13 @@ const ExpenseCPage = () => {
 
   const dispatch = useDispatch();
 
-  const [amount, setAmount] = useState('');
-  const [description, setDescription] = useState('');
-  const [categoryId, setCategoryId] = useState('');
-  const [date, setDate] = useState('');
+  const [formData, setFormData] = useState({
+    amount: '',
+    description: '',
+    categoryId: '',
+    date: '',
+  });
+
   const [selectedExpense, setSelectedExpense] = useState(null); // For editing an expense
   const [showModal, setShowModal] = useState(false); // To control modal visibility
 
@@ -25,27 +28,32 @@ const ExpenseCPage = () => {
 
   // Handle adding a new expense
   const handleAddExpense = () => {
-    if (amount && description.trim() && categoryId ) {
-      const currentDate = date || new Date().toISOString().split('T')[0]; // If no date, set it to today's date
-      const newExpense = { amount, description, date: currentDate, categoryId };
+    if (formData.amount && formData.description.trim() && formData.categoryId) {
+      const currentDate = formData.date || new Date().toISOString().split('T')[0]; // If no date, set it to today's date
+      const newExpense = { ...formData, date: currentDate };
       dispatch(createExpense(newExpense)); // Dispatch the action to create the expense
-      setAmount('');
-      setDescription('');
-      setCategoryId('');
-      setDate('');
+      setFormData({
+        amount: '',
+        description: '',
+        categoryId: '',
+        date: '',
+      });
+      setShowModal(false);
     }
   };
 
   // Handle updating an existing expense
   const handleUpdateExpense = () => {
-    if (selectedExpense && amount && description.trim() && categoryId && date) {
-      const updatedExpense = { ...selectedExpense, amount, description, date, categoryId };
+    if (selectedExpense && formData.amount && formData.description.trim() && formData.categoryId && formData.date) {
+      const updatedExpense = { ...selectedExpense, ...formData };
       dispatch(updateExpense(updatedExpense)); // Dispatch the update action
       setShowModal(false);
-      setAmount('');
-      setDescription('');
-      setCategoryId('');
-      setDate('');
+      setFormData({
+        amount: '',
+        description: '',
+        categoryId: '',
+        date: '',
+      });
     }
   };
 
@@ -54,72 +62,60 @@ const ExpenseCPage = () => {
     dispatch(deleteExpense(expenseId)); // Dispatch the delete action
   };
 
+  // Open the modal for adding a new expense
+  const openAddModal = () => {
+    setFormData({
+      amount: '',
+      description: '',
+      categoryId: '',
+      date: '',
+    });
+    setSelectedExpense(null); // Ensure no selected expense when adding a new one
+    setShowModal(true);
+  };
+
   // Open the modal for updating an expense
   const openUpdateModal = (expense) => {
     setSelectedExpense(expense);
-    setAmount(expense.amount);
-    setDescription(expense.description);
-    setCategoryId(expense.categoryId);
-    setDate(expense.date);
+    setFormData({
+      amount: expense.amount,
+      description: expense.description,
+      categoryId: expense.categoryId,
+      date: expense.date,
+    });
     setShowModal(true);
   };
 
   // Close the modal
   const closeModal = () => {
     setShowModal(false);
-    setAmount('');
-    setDescription('');
-    setCategoryId('');
-    setDate('');
+    setFormData({
+      amount: '',
+      description: '',
+      categoryId: '',
+      date: '',
+    });
+  };
+
+  // Handle form field change
+  const handleInputChange = (field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
   };
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      {/* Expense Form */}
-      <div className="space-y-4 mb-6">
-        <input
-          type="number"
-          placeholder="Amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <input
-          type="text"
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <select
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Select Category</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button
-          onClick={handleAddExpense}
-          className=" bg-blue-500 text-white p-3 rounded-md shadow-md hover:bg-blue-600 transition duration-200"
-        >
-          Add Expense
-        </button>
-      </div>
-
       {/* Display Error */}
       {error && <p className="text-red-500 mb-4">{error}</p>}
-
+      {/* Button to open modal for adding new expense */}
+      <button
+        onClick={openAddModal}
+        className="bg-blue-500 text-white p-2 mb-6 rounded-md shadow-md hover:bg-blue-600 transition duration-200 "
+      >
+        + Add Expense
+      </button>
       {/* Expense Table */}
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto border-collapse border border-gray-300">
@@ -162,22 +158,18 @@ const ExpenseCPage = () => {
         </table>
       </div>
 
-      {/* Modal for Updating Expense */}
+      
+
+      {/* Modal for Adding/Updating Expense */}
       <Modal
         showModal={showModal}
         expense={selectedExpense}
         onClose={closeModal}
-        onSave={handleUpdateExpense}
+        onSave={selectedExpense ? handleUpdateExpense : handleAddExpense} // Use add or update depending on the modal context
         categories={categories}
-        date={date}
-        onChange={(field, value) => {
-          if (field === 'amount') setAmount(value);
-          if (field === 'description') setDescription(value);
-          if (field === 'categoryId') setCategoryId(value);
-          if (field === 'date') setDate(value);
-        }}
+        formData={formData}
+        onChange={handleInputChange}
       />
-      
     </div>
   );
 };

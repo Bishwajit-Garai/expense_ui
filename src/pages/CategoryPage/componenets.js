@@ -11,6 +11,7 @@ const CategoryCPage = () => {
   const [categoryName, setCategoryName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [isAddingCategory, setIsAddingCategory] = useState(false); // Track if we're adding or updating
 
   useEffect(() => {
     if (!categoryFetched) {
@@ -23,6 +24,7 @@ const CategoryCPage = () => {
       const newCategory = { name: categoryName };
       dispatch(createCategory(newCategory));
       setCategoryName('');
+      setShowModal(false); // Close modal after adding
     } else {
       toast.error('Category Name Cannot be blank..');
     }
@@ -41,7 +43,14 @@ const CategoryCPage = () => {
     dispatch(deleteCategory(categoryId));
   };
 
+  const openAddModal = () => {
+    setIsAddingCategory(true);
+    setCategoryName('');
+    setShowModal(true);
+  };
+
   const openUpdateModal = (category) => {
+    setIsAddingCategory(false);
     setSelectedCategory(category);
     setCategoryName(category.name);
     setShowModal(true);
@@ -54,20 +63,13 @@ const CategoryCPage = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      {/* Category Form */}
+      {/* Add Category Button */}
       <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Category Name"
-          value={categoryName}
-          onChange={(e) => setCategoryName(e.target.value)}
-          className="border border-gray-300 p-2 rounded-md w-full"
-        />
         <button
-          onClick={handleAddCategory}
-          className="mt-2 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition duration-200"
+          onClick={openAddModal}
+          className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition duration-200"
         >
-          Add Category
+          + Add Category
         </button>
       </div>
 
@@ -75,7 +77,7 @@ const CategoryCPage = () => {
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
       {/* Category Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto mb-6">
         <table className="min-w-full table-auto border-collapse border border-gray-300">
           <thead>
             <tr className="bg-gray-100">
@@ -107,13 +109,15 @@ const CategoryCPage = () => {
         </table>
       </div>
 
-      {/* Modal for Updating Category */}
+      {/* Modal for Adding or Updating Category */}
       <Modal
         showModal={showModal}
         category={selectedCategory}
         onClose={closeModal}
-        onSave={handleUpdateCategory}
+        onSave={isAddingCategory ? handleAddCategory : handleUpdateCategory}
         onChange={(name) => setCategoryName(name)}
+        categoryName={categoryName}
+        isAddingCategory={isAddingCategory}
       />
     </div>
   );
